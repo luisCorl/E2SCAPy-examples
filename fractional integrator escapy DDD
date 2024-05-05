@@ -1,0 +1,10 @@
+from escapy import scapy as sim
+sim.MNAf("integrador_fraccional.cir")
+A,x,z = sim.formula_DDD()
+X = sim.resuelve_serie_DDD(A,x,z)
+X = sim.simplifica(X)
+
+print(X[3])
+print(".")
+print(".")
+print(X[8])
