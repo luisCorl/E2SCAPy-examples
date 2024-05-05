@@ -1,0 +1,9 @@
+* C:\Users\luico\OneDrive\Escritorio\memristor\mem_a14_20_feb_20242.asc
+V1 1 0 SINE(0 0.5 1e3)
+R2 2 0 10e6
+R1 3 0 10
+XU1 1 3 2 A14_mod_dta_2
+.tran 10ms
+.lib C:\Users\luico\OneDrive\Escritorio\memristor\A14_mod.cir
+.backanno
+.end

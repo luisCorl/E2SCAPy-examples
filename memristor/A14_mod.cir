@@ -1,0 +1,16 @@
+.subckt A14_mod_dta_2 te be Y
+.params ron=100.7 roff=12.6e3 k=17803.4 Cint=1 m=3
+.ic V(Y) = 0.4V
+.FUNC FG1() {V(te)*((1/(ron*(V(Y))+roff*(-V(Y)+1))))}
+.FUNC FG2() {(k*pow(V(te),m)*(pow(sin(pi*V(Y)),2)))}
+.FUNC Fn() {V(Y)}
+C1 Y be 1
+R1 Y be 100G
+*G1 be te te be 0.001
+*G2 be Y te be 9000
+*G1 be te value={(V(te)-V(Y))*(FG1()/(V(te)-V(Y)))}
+*G2 be Y value={(V(Y)-V(be))*(FG2()/(V(Y)-V(be)))}
+G1 be te value={FG1()}
+G2 be Y value={FG2()}
+.ends A14_mod_dta
+
