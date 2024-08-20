@@ -74,7 +74,7 @@ The following window shows the netlist, but only the linear elements that make u
 	\label{img:netlist LTspice}
 \end{figure} 
 
-\section{How to Prepare a Netlist for SCAPy}
+\section{How to Prepare a Netlist for E2SCAPy}
 This step involves saving the netlist in .cir format and naming the elements with a compatible format, keeping in mind that if you want to:
 \begin{itemize}
 	\item OpAmp $=$ O
@@ -96,7 +96,7 @@ In this way, the netlist is organized as shown in the figure \ref{img:netlist py
 \begin{figure}[H]
 	\centering\includegraphics[width=2.7 in]{img_ult/manUSER/netlist python.png
 	}
-	\caption{Netlist for SCAPy}
+	\caption{Netlist for E2SCAPy}
 	\label{img:netlist python}
 \end{figure} 
 
@@ -104,7 +104,7 @@ It is always recommended to organize the passive components (R, L, C) and place 
 
 \newpage
 
-\section{How to Compute a Circuit in SCAPy}
+\section{How to Compute a Circuit in E2SCAPy}
 It is recommended to use the following script as a base for performing symbolic computation using DDD, where the algorithm formulates the mathematical equations and solves the system of linear equations.
 
 \lstinputlisting[language=Octave]{scripts/sumador inversor.py}
@@ -175,5 +175,3 @@ A continuación se muestra el gráfico de salida
 	\caption{Comparative graph between the graph obtained with the Python script (a) and the graph obtained in LTspice (b)}
 	\label{img:Tow thomas grafico}
 \end{figure} 
-
-
