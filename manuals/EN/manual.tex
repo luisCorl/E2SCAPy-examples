@@ -1,0 +1,179 @@
+\renewcommand{\thepage}{\roman{page}}
+\chapter*{User Manual}
+Welcome to E2SCAPy! In this manual, the following topics are covered:
+\begin{itemize}
+	\item Introduction.
+	\item Installation of E2SCAPy.
+	\item Considerations to take into account if you want to obtain a netlist from LTSPICE.
+	\item Obtaining a Netlist from LTSPICE.
+	\item Computing a circuit with E2SCAPy using the layered DDD method.
+	\item Computing a circuit with E2SCAPy using the symbolic method of SymPy.
+	\item Recommendations for obtaining a time-domain analysis, including an example with the Tow-Thomas biquad circuit.
+\end{itemize}
+E2SCAPy is licensed under the GNU GPLV3, which can be consulted from the repository: \url{https://github.com/luisCorl/e2scapy/blob/main/LICENSE.txt} and is not included in this manual due to page limitations, but the reader is encouraged to review it if desired. The reader is also invited to get in touch for recommendations, detected bugs, questions about the functionality, or collaborations through the GitHub contact or directly via email: \url{lui.corl.ing@hotmail.com}.
+\section{Introduction}
+E2SCAPy is an innovative and powerful library designed for the Python programming language, enabling the symbolic resolution of linear circuits. Unlike traditional methods that provide numerical values for voltage or current at a specific element or node, E2SCAPy offers detailed mathematical expressions that describe these quantities in the frequency domain. This approach provides a deeper and more comprehensive understanding of circuit behavior. Additionally, the method for transforming expressions from the frequency domain to the time domain is presented, expanding its usefulness and applicability in the analysis of dynamic systems and the study of transient responses.
+
+\par This manual includes a series of carefully selected scripts that illustrate various examples of calculation and methods for visualizing results, thereby facilitating the learning and application process of E2SCAPy. These examples not only demonstrate the library's capabilities in terms of symbolic resolution and circuit analysis but also show how to effectively plot system responses. In addition to the examples provided here, a more extensive collection of practical examples is available for users in the GitHub repository, which can be found at \url{https://github.com/luisCorl}. This repository is a valuable resource for any reader who wishes to fully explore and utilize the capabilities of E2SCAPy in various circuit analysis scenarios.
+
+\par
+Furthermore, the given repository includes examples of the results shown in this thesis and additional examples such as the EAF model.
+\section{Installation}
+ To use E2SCAPy, it can be obtained directly from the following URLs: \url{https://pypi.org/project/ddd-layer/} To access the download for the DDD algorithm, and the following URL is to access the E2SCAPy algorithm: \url{https://pypi.org/project/e2scapy/}, The installation is done via the pip command. Additionally, if this is the first time you are installing it, it is recommended to install or check that the following packages are already installed:
+\begin{itemize}
+	\item symengine
+	\item memory$\_$profiler
+	\item sympy
+	\item pandas
+	\item numpy
+	\item matplotlib
+\end{itemize}
+
+All of these libraries can also be obtained through the command $pip$, in the figure \ref{img:pip install} shows the procedure for downloading several packages, including ddd$\_$layer and E2SCAPy. Once the installation of all the required libraries is complete, you can perform an import test to ensure that everything is in order. The figure \ref{img:pip install} shows the correct import or invocation of the library without any errors:
+
+%\begin{figure}[H]
+%	\centering\includegraphics[width=3.7 in]{img_ult/manUSER/import.png}
+%	\caption{Comprobación de SCAPy mediante un import}
+%	\label{img:pip import}
+%\end{figure} 
+
+\begin{figure}[H]
+	\centering\includegraphics[width=5.9 in]{img_ult/manUSER/pipComando2.png}
+	\caption{Downloading packages using the pip command}
+	\label{img:pip install}
+\end{figure} 
+
+\section{How to Draw a Circuit}
+Once you have everything needed to start working, it is recommended to have LTspice installed, or obtain it from the following URL: \url{https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html} Now, we will show how to obtain the symbolic equations for the present circuit, which is an inverting summing amplifier:\par 
+Step 1: Draw the circuit in LTspice as shown in the figure
+ \ref{img:sumador inversor} shows item (a) on how to draw a circuit considering the number of nodes and remembering that all nodes connected to ground correspond to node number "0"
+
+\begin{figure}[H]
+	\centering\includegraphics[width=5.7 in]{img_ult/manUSER/sumador inversor.png
+	}
+	\caption{Inverting voltage summing amplifier circuit, (a) shows the circuit drawn in LTspice, (b) shows the output graph at node number 5}
+	\label{img:sumador inversor}
+\end{figure} 
+
+\section{How to Obtain a Netlist from LTspice}
+To obtain the netlist from the figure \ref{img:sumador inversor} (a) 
+To obtain the netlist for a circuit in LTspice, remember that all nodes to which passive components are connected must be numbered. Then, while in the schematic (not in the graph), click on View/SPICE Netlist as shown in the figure. \ref{img:obtener la netlist}
+\begin{figure}[H]
+	\centering\includegraphics[width=5.7 in]{img_ult/manUSER/obtener la netlist.png
+	}
+	\caption{Obtaining a Netlist}
+	\label{img:obtener la netlist}
+\end{figure} 
+
+The following window shows the netlist, but only the linear elements that make up the circuit should be selected, omitting .inc, .tran, .backanno, and .end, which are additional instructions for LTspice.
+
+\begin{figure}[H]
+	\centering\includegraphics[width=3.7 in]{img_ult/manUSER/netlist ltspice.png
+	}
+	\caption{Netlist LTspice}
+	\label{img:netlist LTspice}
+\end{figure} 
+
+\section{How to Prepare a Netlist for SCAPy}
+This step involves saving the netlist in .cir format and naming the elements with a compatible format, keeping in mind that if you want to:
+\begin{itemize}
+	\item OpAmp $=$ O
+	\item Resistor $=$ R
+	\item Inductor $=$ L
+	\item Capacitor $=$ C
+	\item Voltage Source $=$ V
+	\item Current Source $=$ I
+	\item Voltage-Controlled Voltage Source (VCVS)$=$ E
+	\item Voltage-Controlled Current Source (VCCS)$=$ G
+	\item Current-Controlled Voltage Source (CCVS)$=$ H
+	\item Current-Controlled Current Source (CCCS) $=$ F
+	\item Transformer $=$ L1, L2, k1, k2
+	\item Gyrator $=$ J
+\end{itemize}
+
+In this way, the netlist is organized as shown in the figure \ref{img:netlist python}: 
+
+\begin{figure}[H]
+	\centering\includegraphics[width=2.7 in]{img_ult/manUSER/netlist python.png
+	}
+	\caption{Netlist for SCAPy}
+	\label{img:netlist python}
+\end{figure} 
+
+It is always recommended to organize the passive components (R, L, C) and place them in ascending order as shown in the figure. \ref{img:netlist python} and save the file with a .cir format
+
+\newpage
+
+\section{How to Compute a Circuit in SCAPy}
+It is recommended to use the following script as a base for performing symbolic computation using DDD, where the algorithm formulates the mathematical equations and solves the system of linear equations.
+
+\lstinputlisting[language=Octave]{scripts/sumador inversor.py}
+
+The node of interest is node 5 with respect to the electrical circuit shown in the figure. \ref{img:sumador inversor} Therefore, you can request information about node 5 from the terminal, located in the vector X[4] as shown in the figure. \ref{img:output analisis simbolico}
+
+\begin{figure}[H]
+	\centering\includegraphics[width=3.8 in]{img_ult/manUSER/resultado simbolico.png
+	}
+	\caption{Output at node 5 using the DDD method as shown in the figure \ref{img:sumador inversor}}
+	\label{img:output analisis simbolico}
+\end{figure} 
+
+
+It is recommended to use the following script as a base for performing symbolic computation using SymPy, where the algorithm formulates the mathematical equations and solves the system of linear equations.
+
+\lstinputlisting[language=Octave]{scripts/sumador inversor sympy.py}
+
+\begin{figure}[H]
+	\centering\includegraphics[width=3.8 in]{img_ult/manUSER/resultado simbolico sympy.png
+	}
+	\caption{Output at node 5 using the LU method as shown in the figure \ref{img:sumador inversor}}
+	\label{img:output analisis simbolico 2}
+\end{figure} 
+
+\section{Time-Domain Analysis}
+	In the case of having elements that contain information in the frequency domain directly from the MNA formulation, such as the capacitor
+ $C_{n}$ and the inductor $L_{n}$ The result will be in the frequency domain, which allows proper evaluation in that domain. However, in many analyses, it is important to know the symbolic, semi-symbolic, or numerical result in the time domain. To do this, we will analyze a Tow-Thomas biquad circuit in the time domain. For this purpose, the following circuit is prepared:
+
+\begin{figure}[H]
+	\centering\includegraphics[width=5.0 in]{img_ult/manUSER/towtomas.png
+	}
+	\caption{Tow-Thomas biquad circuit}
+	\label{img:Tow thomas}
+\end{figure} 
+
+The nodes of interest are nodes 3, 5, and 7. The netlist is prepared as follows:
+\lstinputlisting[language=Octave]{scripts/TOW THOMAS.cir}
+
+The current netlist is saved in .cir format, and the script is prepared by choosing the solution method using DDD:
+
+\lstinputlisting[language=Octave]{scripts/TOW THOMAS.py}
+
+In the terminal, transfer functions are prepared by dividing the information from the vector. $H3=X[2]/V1$, $H5=X[4]/V1$ y $H7=X[6]/V1$ as shown in the figure:
+
+\begin{figure}[H]
+	\centering\includegraphics[width=5.5 in]{img_ult/manUSER/tow thomas H.png
+	}
+	\caption{Transfer functions for nodes H3, H5, and H7}
+	\label{img:Tow thomas H}
+\end{figure} 
+
+Based on the transfer functions, it is recommended to use the Laplace transform and the inverse Laplace transform in MATLAB, as they often provide better convergence for large algebraic equations.
+
+\lstinputlisting[language=Octave]{scripts/towThomas.m}
+
+As can be observed, it is important to transform the excitation source to the frequency domain in order to obtain the total voltage in the frequency domain and then calculate the inverse Laplace transform.
+
+To plot all of this in Python, you can follow the procedure outlined in the script presented below:
+
+\lstinputlisting[language=Octave]{scripts/grafico tow thomas.py}
+
+A continuación se muestra el gráfico de salida 
+
+\begin{figure}[H]
+	\centering\includegraphics[width=5.5 in]{img_ult/manUSER/grafico tow thomas.png
+	}
+	\caption{Comparative graph between the graph obtained with the Python script (a) and the graph obtained in LTspice (b)}
+	\label{img:Tow thomas grafico}
+\end{figure} 
+
+
